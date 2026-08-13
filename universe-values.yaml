@@ -1,0 +1,55 @@
+grafana:
+  enabled: true
+  adminUser: admin
+  adminPassword: unikum123
+  sidecar:
+    dashboards:
+      enabled: true
+      defaultReload: true
+      label: grafana_dashboard
+      searchNamespace: ALL
+
+  dashboards:
+    default:
+      # Example dashboard ID 13659 (Grafana.com)
+      monitoring-dashboard-13659:
+        gnetId: 13659
+        revision: 1
+        datasource: Prometheus
+
+prometheus:
+  prometheusSpec:
+    additionalScrapeConfigs:
+      name: additional-scrape-configs
+      key: additional-scrape-configs.yaml
+
+blackboxExporter:
+  enabled: true
+  config:
+    modules:
+      http_2xx:
+        prober: http
+        timeout: 5s
+        http:
+          valid_http_versions: ["HTTP/1.1", "HTTP/2"]
+          method: GET
+          headers:
+            User-Agent: "Blackbox Exporter"
+
+scrapeConfigs:
+  # External additional scrape config for blackbox exporter probe
+  additional-scrape-configs.yaml: |
+    - job_name: 'blackbox_google'
+      metrics_path: /probe
+      params:
+        module: [http_2xx]
+      static_configs:
+        - targets:
+          - https://www.google.com
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: __param_target
+        - source_labels: [__param_target]
+          target_label: instance
+        - target_label: __address__
+          replacement: blackbox-exporter:9115  # assumes default service name
