@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: google-blackbox-probe
+  namespace: monitoring
+  labels:
+    # Ensure this matches the release label your Prometheus uses to discover Probes
+    release: kube-prometheus-stack 
+spec:
+  # The module configured in your Blackbox Exporter values
+  module: http_2xx 
+  
+  # Configuration pointing Prometheus to your Blackbox Exporter service
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc.cluster.local:9115
+    path: /probe
+    
+  # The actual endpoint(s) you want to probe
+  targets:
+    staticConfig:
+      static:
+        - https://google.com
+      labels:
+        instance: google.com
+

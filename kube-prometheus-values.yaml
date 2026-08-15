@@ -1,0 +1,40 @@
+# kube-prometheus-values.yaml
+grafana:
+  enabled: true
+  
+  # Set custom login credentials
+  adminUser: admin
+  adminPassword: unikum123
+
+  # Automatically import dashboard 13659
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'default'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+
+  dashboards:
+    default:
+      blackbox-exporter-http-prober:
+        gnetId: 13659
+        revision: 1
+        datasource: Prometheus
+
+prometheus:
+  prometheusSpec:
+    # Explicitly ensure Prometheus scans for Probe resources across namespaces
+    probeSelectorNilUsesHelmValues: false
+    probeSelector:
+      matchLabels:
+        release: kube-prometheus-stack
+
+# Create the specific target probe directly within the chart deployment
+additionalPrometheusRulesMap: {}
+
