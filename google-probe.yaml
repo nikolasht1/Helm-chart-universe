@@ -12,7 +12,7 @@ spec:
   
   # Configuration pointing Prometheus to your Blackbox Exporter service
   prober:
-    url: prometheus-blackbox-exporter.monitoring.svc.cluster.local:9115
+    url: blackbox-exporter-prometheus-blackbox-exporter:9115
     path: /probe
     
   # The actual endpoint(s) you want to probe
