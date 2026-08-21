@@ -1,11 +1,18 @@
-helm repo add prometheus-community https://github.io
+#!/bin/bash
+
+#helm repo add prometheus-community https://github.io
+
 helm repo update
+
 kubectl create namespace monitoring
-helm install prometheus-blackbox-exporter prometheus-community/prometheus-blackbox-exporter \
-  --namespace monitoring \
-  -f blackbox-values.yaml
-helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
-  --namespace monitoring \
-  -f kube-prometheus-stack-values.yaml
+
+helm install k-prom-black prometheus-community/prometheus-blackbox-exporter --namespace monitoring -f blackbox-values.yaml
+
+helm upgrade --install k-prom-black prometheus-community/prometheus-blackbox-exporter -n monitoring -f blackbox-values.yaml
+
+helm install k-prom-stack prometheus-community/kube-prometheus-stack --namespace monitoring -f kube-prometheus-values.yaml
+
+helm upgrade --install k-prom-stack prometheus-community/kube-prometheus-stack -n monitoring -f kube-prometheus-values.yaml
+
 kubectl apply -f google-probe.yaml
 
