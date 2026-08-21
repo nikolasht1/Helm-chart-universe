@@ -16,5 +16,7 @@ helm upgrade --install k-prom-stack prometheus-community/kube-prometheus-stack -
 
 kubectl apply -f google-probe.yaml
 
+sleep 60
+
 kubectl port-forward svc/k-prom-stack-grafana 3000:80 -n monitoring
 
