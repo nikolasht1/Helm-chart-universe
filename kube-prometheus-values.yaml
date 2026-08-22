@@ -3,8 +3,8 @@ grafana:
   enabled: true
   
   # Set custom login credentials
-  adminUser: admin
-  adminPassword: unikum123
+  adminUser: {{.Values.grafanaUser}}
+  adminPassword: {{.Values.grafanaPassword}}
 
   # Automatically import dashboard 13659
   dashboardProviders:
@@ -23,7 +23,7 @@ grafana:
   dashboards:
     default:
       blackbox-exporter-http-prober:
-        gnetId: 13659
+        gnetId: {{.Values.grafanaDashboard}}
         revision: 1
         datasource: Prometheus
 
