@@ -12,11 +12,16 @@ helm upgrade --install k-prom-black prometheus-community/prometheus-blackbox-exp
 
 helm install k-prom-stack prometheus-community/kube-prometheus-stack --namespace monitoring -f kube-prometheus-values.yaml
 
-helm upgrade --install k-prom-stack prometheus-community/kube-prometheus-stack -n monitoring -f kube-prometheus-values.yaml
+export $(grep -v '^#' .env | xargs)
+
+helm upgrade --install k-prom-stack prometheus-community/kube-prometheus-stack -n monitoring -f kube-prometheus-values.yaml \
+	--set grafana.adminUser=$GRAFANA_USER \
+	--set grafana.adminPassword=$GRAFANA_PASSWORD \
+	--set grafana.dashboards.default.blackbox-exporter-http-prober.gnetId=$GRAFANA_DASHBOARD
 
 kubectl apply -f google-probe.yaml
 
-sleep 60
+sleep 40
 
 kubectl port-forward svc/k-prom-stack-grafana 3000:80 -n monitoring
 
